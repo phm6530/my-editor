@@ -80,7 +80,11 @@ export const suggestion = {
           return true;
         }
 
-        return component.ref?.onKeyDown(props);
+        return (
+          (
+            component.ref as { onKeyDown?: (event: KeyboardEvent) => boolean }
+          )?.onKeyDown?.(props.event) ?? false
+        );
       },
 
       onExit() {
