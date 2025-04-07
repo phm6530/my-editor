@@ -1,6 +1,5 @@
 "use client";
 import { useState } from "react";
-import "./App.css";
 import TipTapEditor from "./tiptap-custom-editor";
 
 export default function Counter() {

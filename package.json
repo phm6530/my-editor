@@ -7,7 +7,7 @@
   "type": "module",
   "files": [
     "dist",
-    "App.css"
+    "src/App.css"
   ],
   "scripts": {
     "dev": "vite",
