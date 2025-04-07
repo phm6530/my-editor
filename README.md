@@ -18,3 +18,12 @@ npm install @tiptap/react @tiptap/pm @tiptap/starter-kit
 @tiptap/react \
 @tiptap/starter-kit \
 @tiptap/suggestion
+
+
+
+This project uses [Tiptap](https://tiptap.dev), a headless, framework-agnostic, extendable rich text editor.  
+Tiptap is licensed under the MIT License.  
+© 2025 [Your Name]. Additional modifications are also released under the MIT License.
+
+
+
