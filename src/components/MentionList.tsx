@@ -1,4 +1,3 @@
-import "./Mention.css";
 import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 
 interface MentionListProps {
