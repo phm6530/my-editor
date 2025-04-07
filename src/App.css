@@ -1,3 +1,10 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: red;
+  --font-body: "Inter", sans-serif;
+}
+
 #root {
   max-width: 1280px;
   margin: 0 auto;
