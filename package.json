@@ -6,7 +6,8 @@
   "version": "0.0.3",
   "type": "module",
   "files": [
-    "dist"
+    "dist",
+    "App.css"
   ],
   "scripts": {
     "dev": "vite",
