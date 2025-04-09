@@ -20,6 +20,7 @@ import Toolbar from "./components/ToolBar";
 import TextAlign from "@tiptap/extension-text-align";
 import FontFamily from "@tiptap/extension-font-family";
 import TextStyle from "@tiptap/extension-text-style";
+import ImageResize from "tiptap-extension-resize-image";
 
 const lowlight = createLowlight(common);
 lowlight.register("html", html);
@@ -41,7 +42,7 @@ const TipTapEditor = ({
   onChange?: (_html: string) => void;
   placeholder?: string;
   mode?: "view" | "editor";
-  uploadCallback?: () => Promise<string | null>;
+  uploadCallback?: (e: File) => Promise<string | null>;
   className?: string;
   setFontFailmy?: string[];
 }) => {
@@ -54,6 +55,7 @@ const TipTapEditor = ({
       StarterKit.configure({
         codeBlock: false, // StarterKit의 기본 codeBlock 비활성화
       }), // 여기 이미 Heading + codeblock
+      ImageResize,
       CodeBlockLowlight.configure({
         lowlight,
       }),
@@ -120,7 +122,7 @@ const TipTapEditor = ({
   };
 
   return (
-    <div className="table w-full rounded-md    border-collapse ">
+    <div className="table w-full rounded-md border-collapse ">
       <div className="flex flex-col relative">
         {/* tool bar */}
         {mode === "editor" && (

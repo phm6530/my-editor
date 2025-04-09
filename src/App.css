@@ -1,6 +1,5 @@
 /* tiptap custom - css */
 @import "./style/editor.css";
-@import "./style/editor-toolbar.css";
 @import "./style/editor-font-family.css";
 
 @theme {

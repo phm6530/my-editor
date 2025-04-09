@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 
 import { Editor } from "@tiptap/react";
-import { useCallback } from "react";
+import { ChangeEvent, useCallback, useRef } from "react";
 import { cn } from "../lib/utils";
 import { SelectList } from "./shared/select-list";
 import { TooptipBtn } from "./shared/tootip-btn";
@@ -27,9 +27,10 @@ export default function Toolbar({
   setFontFailmy,
 }: {
   editor: Editor;
-  uploadCallback?: () => Promise<string | null>;
+  uploadCallback?: (e: File) => Promise<string | null>;
   setFontFailmy: string[];
 }) {
+  const ref = useRef<HTMLInputElement | null>(null);
   const addYoutubeVideo = () => {
     const url = prompt("삽입하실 Youtube Url을 입력해주세요");
 
@@ -67,13 +68,17 @@ export default function Toolbar({
       .run();
   };
 
-  const addImage = useCallback(async () => {
-    const url = await uploadCallback();
+  // img Uploader
+  const addImage = useCallback(
+    async (e: ChangeEvent<HTMLInputElement>) => {
+      const url = await uploadCallback(e.target.files[0]);
 
-    if (url) {
-      editor?.chain().focus().setImage({ src: url }).run();
-    }
-  }, [editor, uploadCallback]);
+      if (url) {
+        editor?.chain().focus().setImage({ src: url }).run();
+      }
+    },
+    [editor, uploadCallback]
+  );
 
   // menu
   const headingButtons = [
@@ -174,7 +179,7 @@ export default function Toolbar({
 
       {
         toolname: "이미지 삽입",
-        onclick: () => addImage(),
+        onclick: () => ref.current.click(),
         icon: Image,
       },
     ],
@@ -182,8 +187,11 @@ export default function Toolbar({
 
   return (
     <div className="flex  mb-2 sticky top-0  z-10 items-center bg-background py-3">
+      {/* Font Family */}
       {setFontFailmy && <SelectList fontList={setFontFailmy} editor={editor} />}
 
+      {/* upload */}
+      <input type="file" className="hidden" ref={ref} onChange={addImage} />
       {headingButtons.map((group, groupIdx) => {
         return (
           <div

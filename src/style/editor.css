@@ -120,7 +120,7 @@
   background: var(--primary);
   border-radius: 0.4rem;
   -webkit-box-decoration-break: clone;
-          box-decoration-break: clone;
+  box-decoration-break: clone;
   color: var(--background);
   padding: 0.3rem 0.3rem;
   font-size: 12px;
@@ -151,8 +151,10 @@
   padding-inline: 5px;
   border-bottom: 1px solid transparent;
 }
-.dropdown-menu button:hover, .dropdown-menu button:hover.is-selected, .dropdown-menu button.is-selected {
+.dropdown-menu button:hover,
+.dropdown-menu button:hover.is-selected,
+.dropdown-menu button.is-selected {
   border-bottom: 1px solid;
   margin-left: 5px;
   transition: all 0.5s ease;
-}/*# sourceMappingURL=editor.css.map */
+} /*# sourceMappingURL=editor.css.map */
