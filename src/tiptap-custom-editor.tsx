@@ -1,11 +1,6 @@
 "use client";
-import React, { useCallback, useState } from "react";
-import {
-  BubbleMenu,
-  EditorContent,
-  FloatingMenu,
-  useEditor,
-} from "@tiptap/react";
+import { useState } from "react";
+import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Youtube from "@tiptap/extension-youtube";
 import Mention from "@tiptap/extension-mention";
@@ -14,17 +9,17 @@ import css from "highlight.js/lib/languages/css";
 import js from "highlight.js/lib/languages/javascript";
 import ts from "highlight.js/lib/languages/typescript";
 import html from "highlight.js/lib/languages/xml";
-
 import Image from "@tiptap/extension-image";
-import Blockquote from "@tiptap/extension-blockquote";
 import Placeholder from "@tiptap/extension-placeholder";
 import Underline from "@tiptap/extension-underline";
 import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
 import Link from "@tiptap/extension-link";
 import { suggestion } from "./components/suggestion";
-import "./App.css";
 import { cn } from "./lib/utils";
 import Toolbar from "./components/ToolBar";
+import TextAlign from "@tiptap/extension-text-align";
+import FontFamily from "@tiptap/extension-font-family";
+import TextStyle from "@tiptap/extension-text-style";
 
 const lowlight = createLowlight(common);
 lowlight.register("html", html);
@@ -36,8 +31,10 @@ const TipTapEditor = ({
   mode = "editor",
   value,
   onChange,
-  placeholder,
+  placeholder = "내용을 입력해주세요",
   uploadCallback,
+  className,
+  setFontFailmy,
 }: {
   content?: string;
   value?: string;
@@ -45,6 +42,8 @@ const TipTapEditor = ({
   placeholder?: string;
   mode?: "view" | "editor";
   uploadCallback?: () => Promise<string | null>;
+  className?: string;
+  setFontFailmy?: string[];
 }) => {
   const [isLoading, setIsLoading] = useState<boolean>(
     mode === "editor" && false
@@ -52,7 +51,9 @@ const TipTapEditor = ({
 
   const editor = useEditor({
     extensions: [
-      StarterKit, // 여기 이미 Heading + codeblock
+      StarterKit.configure({
+        codeBlock: false, // StarterKit의 기본 codeBlock 비활성화
+      }), // 여기 이미 Heading + codeblock
       CodeBlockLowlight.configure({
         lowlight,
       }),
@@ -64,6 +65,9 @@ const TipTapEditor = ({
       Link.configure({
         openOnClick: false,
       }),
+      TextAlign.configure({
+        types: ["heading", "paragraph"],
+      }),
       Mention.configure({
         HTMLAttributes: {
           class: "mention",
@@ -71,8 +75,10 @@ const TipTapEditor = ({
         suggestion,
       }),
       Image,
-      Blockquote,
+
       Underline,
+      TextStyle,
+      FontFamily,
     ],
 
     editorProps: {
@@ -90,20 +96,12 @@ const TipTapEditor = ({
     }),
     ...(mode === "view" && {
       editable: false,
-    }), //이거에 따라 바뀜 ㅇㅇ
+    }),
     onCreate: () => {
       setIsLoading(false);
     },
     immediatelyRender: false,
   });
-
-  const addImage = useCallback(async () => {
-    const url = await uploadCallback();
-
-    if (url) {
-      editor?.chain().focus().setImage({ src: url }).run();
-    }
-  }, [editor, uploadCallback]);
 
   //   useEffect(() => {
   //     if (editor && value !== undefined && editor.getHTML() !== value) {
@@ -122,125 +120,32 @@ const TipTapEditor = ({
   };
 
   return (
-    <div className="table w-full rounded-md overflow-hidden   border-collapse ">
-      {editor && (
-        <BubbleMenu
-          className="bubble-menu"
-          tippyOptions={{ duration: 100 }}
-          editor={editor}
-        >
-          <button
-            onClick={() => editor.chain().focus().toggleBold().run()}
-            className={editor.isActive("bold") ? "is-active" : ""}
-          >
-            Bold
-          </button>
-          <button
-            onClick={() => editor.chain().focus().toggleItalic().run()}
-            className={editor.isActive("italic") ? "is-active" : ""}
-          >
-            Italic
-          </button>
-          <button
-            onClick={() => editor.chain().focus().toggleStrike().run()}
-            className={editor.isActive("strike") ? "is-active" : ""}
-          >
-            Strike
-          </button>
-        </BubbleMenu>
-      )}
-
-      {editor && (
-        <FloatingMenu
-          className="floating-menu"
-          tippyOptions={{ duration: 100 }}
-          editor={editor}
-        >
-          <button
-            onClick={() =>
-              editor.chain().focus().toggleHeading({ level: 1 }).run()
-            }
-            className={
-              editor.isActive("heading", { level: 1 }) ? "is-active" : ""
-            }
-          >
-            H1
-          </button>
-          <button
-            onClick={() =>
-              editor.chain().focus().toggleHeading({ level: 2 }).run()
-            }
-            className={
-              editor.isActive("heading", { level: 2 }) ? "is-active" : ""
-            }
-          >
-            H2
-          </button>
-          <button
-            onClick={() => editor.chain().focus().toggleBulletList().run()}
-            className={editor.isActive("bulletList") ? "is-active" : ""}
-          >
-            Bullet list
-          </button>
-        </FloatingMenu>
-      )}
-
-      {mode === "editor" && <Toolbar editor={editor} />}
-      <div
-        className={cn(
-          mode === "view" && "border-none",
-          "table-cell w-full border-input border !rounded-lg cursor-text  h-full overflow-hidden rounded-b-md focus-within:border-primary focus-within:focus-within:bg-[hsl(var(--custom-color))]"
+    <div className="table w-full rounded-md    border-collapse ">
+      <div className="flex flex-col relative">
+        {/* tool bar */}
+        {mode === "editor" && (
+          <Toolbar
+            uploadCallback={uploadCallback}
+            editor={editor}
+            setFontFailmy={setFontFailmy}
+          />
         )}
-      >
-        <div className="control-group">
-          <div className="button-group">
-            <button
-              onClick={() => editor.chain().focus().toggleUnderline().run()}
-              className={editor.isActive("underline") ? "is-active" : ""}
-            >
-              Toggle underline
-            </button>
-          </div>
-        </div>
-        <div className="control-group">
-          <div className="button-group flex gap-3">
-            <button
-              onClick={() => editor.chain().focus().toggleBlockquote().run()}
-              className={editor.isActive("blockquote") ? "is-active" : ""}
-            >
-              Toggle blockquote
-            </button>
-            <button
-              onClick={() => editor.chain().focus().setBlockquote().run()}
-              disabled={!editor.can().setBlockquote()}
-            >
-              Set blockquote
-            </button>
-            <button
-              onClick={() => editor.chain().focus().unsetBlockquote().run()}
-              disabled={!editor.can().unsetBlockquote()}
-            >
-              Unset blockquote
-            </button>
-          </div>
-        </div>
-        <button
-          onClick={() => editor.chain().focus().toggleBlockquote().run()}
-          className={editor.isActive("blockquote") ? "is-active" : ""}
-        >
-          Toggle blockquote
-        </button>
-        <div className="button-group">
-          <button onClick={addImage}>Set image</button>
-        </div>
-        <EditorContent
-          editor={editor}
+        <div
           className={cn(
-            " w-full h-full min-h-[150px] overflow-hidden ",
-            mode === "editor" && " dark:bg-custom-input p-3"
+            mode === "view" && "border-none",
+            "table-cell w-full border-input border !rounded-lg cursor-text  h-full overflow-hidden rounded-b-md focus-within:focus-within:bg-[hsl(var(--custom-color))]"
           )}
-          onClick={handleEditorClick}
-        />
+        >
+          <EditorContent
+            editor={editor}
+            className={cn(
+              " w-full h-full min-h-[150px] overflow-hidden ",
+              mode === "editor" && " dark:bg-custom-input p-3 ",
+              className
+            )}
+            onClick={handleEditorClick}
+          />
+        </div>
       </div>
     </div>
   );

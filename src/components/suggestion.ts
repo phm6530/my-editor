@@ -1,9 +1,9 @@
 import { ReactRenderer } from "@tiptap/react";
-import tippy, { Instance, Props } from "tippy.js";
+import tippy from "tippy.js";
 import { MentionList } from "./MentionList";
 
 export const suggestion = {
-  items: ({ query }: { query: string }) => {
+  items: ({ query }) => {
     return [
       "Lea Thompson",
       "Cyndi Lauper",
@@ -36,8 +36,8 @@ export const suggestion = {
   },
 
   render: () => {
-    let component: ReactRenderer;
-    let popup: Instance<Props>[] = [];
+    let component;
+    let popup;
 
     return {
       onStart: (props) => {
@@ -80,11 +80,7 @@ export const suggestion = {
           return true;
         }
 
-        return (
-          (
-            component.ref as { onKeyDown?: (event: KeyboardEvent) => boolean }
-          )?.onKeyDown?.(props.event) ?? false
-        );
+        return component.ref?.onKeyDown(props);
       },
 
       onExit() {

@@ -19,8 +19,9 @@ export const MentionList = forwardRef<MentionListRef, MentionListProps>(
   (props, ref) => {
     const [selectedIndex, setSelectedIndex] = useState(0);
 
-    const selectItem = (index: number) => {
+    const selectItem = (index) => {
       const item = props.items[index];
+
       if (item) {
         props.command({ id: item });
       }

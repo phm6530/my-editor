@@ -1,21 +1,25 @@
 "use client";
-import { useState } from "react";
 import TipTapEditor from "./tiptap-custom-editor";
+import "./App.css";
+import "./global.css";
 
 export default function Counter() {
-  const [count, setCount] = useState(0);
-
   const test = async () => {
     const url = window.prompt("이미지 URL을 입력하세요");
     return url || null;
   };
 
+  const themeToggle = () => {
+    const body = document.querySelector("body");
+    body.classList.toggle("dark");
+  };
+
   return (
     <>
-      <button onClick={() => setCount(count + 1)} className="">
-        count: {count}
-      </button>{" "}
-      <TipTapEditor uploadCallback={test} />
+      <button onClick={themeToggle} className="border p-3 mb-5 cursor-pointer">
+        Theme Toggle
+      </button>
+      <TipTapEditor setFontFailmy={["SUIT-Regular"]} uploadCallback={test} />
     </>
   );
 }
