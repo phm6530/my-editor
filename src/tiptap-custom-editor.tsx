@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Youtube from "@tiptap/extension-youtube";
@@ -30,7 +30,7 @@ lowlight.register("ts", ts);
 
 const TipTapEditor = ({
   mode = "editor",
-  value,
+  content,
   onChange,
   placeholder = "내용을 입력해주세요",
   uploadCallback,
@@ -38,7 +38,6 @@ const TipTapEditor = ({
   setFontFailmy,
 }: {
   content?: string;
-  value?: string;
   onChange?: (_html: string) => void;
   placeholder?: string;
   mode?: "view" | "editor";
@@ -89,7 +88,7 @@ const TipTapEditor = ({
       },
     },
 
-    content: value || "",
+    content: content || "",
     ...(onChange && {
       onUpdate: ({ editor }) => {
         const html = editor.getHTML();
@@ -105,11 +104,11 @@ const TipTapEditor = ({
     immediatelyRender: false,
   });
 
-  //   useEffect(() => {
-  //     if (editor && value !== undefined && editor.getHTML() !== value) {
-  //       editor.commands.setContent(value);
-  //     }
-  //   }, [editor, value]);
+  useEffect(() => {
+    if (editor && content !== undefined && editor.getHTML() !== content) {
+      editor.commands.setContent(content);
+    }
+  }, [editor, content]);
 
   if (!editor || isLoading) {
     return "loading....";
@@ -140,6 +139,7 @@ const TipTapEditor = ({
         >
           <EditorContent
             editor={editor}
+            disabled={mode === "view" ? true : false}
             className={cn(
               " w-full h-full min-h-[150px] overflow-hidden ",
               mode === "editor" && " dark:bg-custom-input p-3 ",
