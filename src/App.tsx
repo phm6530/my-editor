@@ -1,40 +1,49 @@
 "use client";
-import {
-  CustomTipTapEditor,
-  handleHeadingChange,
-} from "./tiptap-custom-editor";
 import "./App.css";
 import "./global.css";
+import useMyEditor from "./hooks/useMyEditor";
+import { MyToolbar, MyEditorContent } from "./components/MyEditorComponent";
+import { useForm } from "react-hook-form";
 import { imgUploader } from "./uploadhandler";
-import { useState } from "react";
 
-export default function Counter() {
-  const [list, setList] = useState(null);
-  const themeToggle = () => {
-    const body = document.querySelector("body");
-    body.classList.toggle("dark");
+export default function App() {
+  const form = useForm({
+    defaultValues: {
+      value: "",
+    },
+  });
+
+  const { editor, editorMode, getHeadings, configs } = useMyEditor({
+    placeholder: "test",
+    onChange: (html) => {
+      form.setValue("value", html);
+    },
+    enableImage: true,
+  });
+
+  const t = () => {
+    const test = getHeadings();
+    console.log(test);
   };
 
-  const createList = () => {
-    const mylist = handleHeadingChange();
-    console.log(mylist);
-    setList(mylist);
-  };
+  // 전체 에디터 사용
+  // return <MyEditor editor={editor} editorMode={editorMode} {...configs} />;
 
+  // 또는 개별 컴포넌트 사용
   return (
-    <>
-      <button onClick={themeToggle} className="border p-3 mb-5 cursor-pointer">
-        Theme Toggle
-      </button>
-      <pre>{JSON.stringify(list, null, 2)}</pre>
-      <button onClick={createList}>목차 만들기</button>
-      <CustomTipTapEditor
-        setFontFailmy={["SUIT-Regular"]}
+    <div>
+      <button onClick={t}>test</button>
+      <MyToolbar
+        editor={editor}
+        editorMode={editorMode}
+        {...configs}
         uploadCallback={async (e) => {
           return await imgUploader(e, "blog");
         }}
-        onHeadingsChange={(e) => console.log(e)}
       />
-    </>
+      <div className="custom-wrapper">
+        <MyEditorContent editor={editor} editorMode={editorMode} />
+      </div>
+    </div>
   );
 }

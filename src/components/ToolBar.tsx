@@ -21,15 +21,22 @@ import { ChangeEvent, useCallback, useRef } from "react";
 import { cn } from "../lib/utils";
 import { SelectList } from "./shared/select-list";
 import { TooptipBtn } from "./shared/tootip-btn";
+import { UseMyEditorProps } from "@/hooks/useMyEditor";
 export default function Toolbar({
   editor,
   uploadCallback,
   setFontFailmy,
+  enableImage,
+  enableCodeBlock,
+  enableYoutube,
 }: {
   editor: Editor;
   uploadCallback?: (e: File) => Promise<string | null>;
   setFontFailmy: string[];
-}) {
+} & Omit<
+  UseMyEditorProps,
+  "onChange" | "content" | "editorMode" | "placeholder"
+>) {
   const ref = useRef<HTMLInputElement | null>(null);
   const addYoutubeVideo = () => {
     const url = prompt("삽입하실 Youtube Url을 입력해주세요");
@@ -40,6 +47,29 @@ export default function Toolbar({
       });
     }
   };
+  const etcButtons = [
+    enableCodeBlock && {
+      toolname: "코드 블럭",
+      onclick: () => editor.chain().focus().toggleCodeBlock().run(),
+      active: editor.isActive("codeBlock"),
+      icon: Code2,
+    },
+    enableYoutube && {
+      toolname: "Youtube",
+      onclick: () => addYoutubeVideo(),
+      icon: Youtube,
+    },
+    {
+      toolname: "Link",
+      onclick: () => addLink(),
+      icon: Link,
+    },
+    enableImage && {
+      toolname: "이미지 삽입",
+      onclick: () => ref.current?.click(),
+      icon: Image,
+    },
+  ].filter(Boolean);
 
   const addLink = () => {
     const previousUrl = editor.getAttributes("link").href;
@@ -74,7 +104,13 @@ export default function Toolbar({
       const url = await uploadCallback(e.target.files[0]);
 
       if (url) {
-        editor?.chain().focus().setImage({ src: url }).run();
+        // 포커스 문서 뒤로
+        editor
+          ?.chain()
+          .focus("end")
+          .insertContent([{ type: "paragraph" }])
+          .setImage({ src: url })
+          .run();
       }
     },
     [editor, uploadCallback]
@@ -158,31 +194,7 @@ export default function Toolbar({
       },
     ],
 
-    // etc
-    [
-      {
-        toolname: "코드 블럭",
-        onclick: () => editor.chain().focus().toggleCodeBlock().run(),
-        active: editor.isActive("codeBlock"),
-        icon: Code2,
-      },
-      {
-        toolname: "Youtube",
-        onclick: () => addYoutubeVideo(),
-        icon: Youtube,
-      },
-      {
-        toolname: "Link",
-        onclick: () => addLink(),
-        icon: Link,
-      },
-
-      {
-        toolname: "이미지 삽입",
-        onclick: () => ref.current.click(),
-        icon: Image,
-      },
-    ],
+    etcButtons,
   ];
 
   return (
