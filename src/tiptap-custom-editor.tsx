@@ -1,6 +1,7 @@
 "use client";
+import { debounce } from "lodash";
 import { useEffect, useState } from "react";
-import { EditorContent, useEditor } from "@tiptap/react";
+import { Editor, EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Youtube from "@tiptap/extension-youtube";
 import Mention from "@tiptap/extension-mention";
@@ -21,6 +22,23 @@ import TextAlign from "@tiptap/extension-text-align";
 import FontFamily from "@tiptap/extension-font-family";
 import TextStyle from "@tiptap/extension-text-style";
 import ImageResize from "tiptap-extension-resize-image";
+import Heading from "@tiptap/extension-heading";
+
+// head로 목차 생성
+const CustomHeading = Heading.extend({
+  renderHTML({ node, HTMLAttributes }) {
+    const level = node.attrs.level;
+    return [
+      `h${level}`,
+      {
+        ...HTMLAttributes,
+        id: `heading-${level}`,
+        class: `heading-lv${level}`,
+      },
+      0,
+    ];
+  },
+});
 
 const lowlight = createLowlight(common);
 lowlight.register("html", html);
@@ -28,7 +46,21 @@ lowlight.register("css", css);
 lowlight.register("js", js);
 lowlight.register("ts", ts);
 
-const TipTapEditor = ({
+const handleHeadingChange = debounce((editor: Editor) => {
+  const doc = editor.getJSON();
+  const headings =
+    doc.content
+      ?.filter((n) => n.type === "heading")
+      .map((n) => ({
+        level: n.attrs.level,
+        id: n.attrs.id,
+        text: n.content?.map((c) => c.text).join("") ?? "",
+      })) ?? [];
+
+  return headings;
+}, 500);
+
+const CustomTipTapEditor = ({
   mode = "editor",
   content,
   onChange,
@@ -36,6 +68,7 @@ const TipTapEditor = ({
   uploadCallback,
   className,
   setFontFailmy,
+  onHeadingsChange,
 }: {
   content?: string;
   onChange?: (_html: string) => void;
@@ -44,6 +77,7 @@ const TipTapEditor = ({
   uploadCallback?: (e: File) => Promise<string | null>;
   className?: string;
   setFontFailmy?: string[];
+  onHeadingsChange: (e: object) => any;
 }) => {
   const [isLoading, setIsLoading] = useState<boolean>(
     mode === "editor" && false
@@ -52,8 +86,10 @@ const TipTapEditor = ({
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
-        codeBlock: false, // StarterKit의 기본 codeBlock 비활성화
+        codeBlock: false,
+        heading: false,
       }), // 여기 이미 Heading + codeblock
+      CustomHeading,
       ImageResize,
       CodeBlockLowlight.configure({
         lowlight,
@@ -89,12 +125,14 @@ const TipTapEditor = ({
     },
 
     content: content || "",
-    ...(onChange && {
-      onUpdate: ({ editor }) => {
+    onUpdate: ({ editor }) => {
+      if (mode === "editor") {
         const html = editor.getHTML();
-        onChange(html === "<p></p>" ? "" : html);
-      },
-    }),
+        onChange?.(html === "<p></p>" ? "" : html);
+      }
+
+      const doc = editor.getJSON();
+    },
     ...(mode === "view" && {
       editable: false,
     }),
@@ -153,4 +191,4 @@ const TipTapEditor = ({
   );
 };
 
-export default TipTapEditor;
+export { CustomTipTapEditor, handleHeadingChange };
