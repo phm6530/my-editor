@@ -1,8 +1,7 @@
 "use client";
 import "./App.css";
-import "./global.css";
-import useMyEditor from "./hooks/useMyEditor";
-import { MyToolbar, MyEditorContent } from "./components/MyEditorComponent";
+import "../src/global.css";
+import { MyEditorContent, MyToolbar, useMyEditor } from "@/index";
 import { useForm } from "react-hook-form";
 import { imgUploader } from "./uploadhandler";
 

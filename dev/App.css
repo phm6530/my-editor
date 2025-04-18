@@ -2,9 +2,6 @@
 @import "./style/editor.css";
 @import "./style/editor-font-family.css";
 
-@theme {
-}
-
 #root {
   max-width: 1280px;
   margin: 0 auto;
