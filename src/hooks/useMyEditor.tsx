@@ -1,6 +1,7 @@
 import { useLayoutEffect, useRef } from "react";
 import { Editor, useEditor } from "@tiptap/react";
 import { extensionsConfig } from "../config/editor.config";
+import { debounce } from "lodash"; // 또는 직접 구현
 
 export type UseMyEditorProps = {
   editorMode?: "editor" | "view";
@@ -18,8 +19,16 @@ export default function useMyEditor({
   onChange,
   ...configs
 }: UseMyEditorProps) {
+  const initialized = useRef(false);
+
   // control
   const editorRef = useRef<Editor | null>(null);
+  const debouncedChange = useRef(
+    debounce((editor: Editor) => {
+      const html = editor.getHTML();
+      onChange?.(html === "<p></p>" ? "" : html);
+    }, 300)
+  ).current;
 
   const control = useEditor({
     extensions: extensionsConfig({ ...configs }),
@@ -32,8 +41,7 @@ export default function useMyEditor({
     onUpdate: ({ editor }) => {
       editorRef.current = editor;
       if (editorMode === "editor") {
-        const html = editor.getHTML();
-        onChange?.(html === "<p></p>" ? "" : html);
+        debouncedChange(editor);
       }
     },
     ...(editorMode === "view" && {
@@ -43,8 +51,11 @@ export default function useMyEditor({
   });
 
   useLayoutEffect(() => {
-    editorRef.current = control;
-  }, [control]);
+    if (control && content && !initialized.current) {
+      control.commands.setContent(content);
+      initialized.current = true;
+    }
+  }, [control, content]);
 
   // 목차 추출 도구
   const getHeadings = () => {

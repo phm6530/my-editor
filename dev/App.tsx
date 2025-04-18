@@ -12,11 +12,11 @@ export default function App() {
     },
   });
 
-  const { editor, editorMode, getHeadings, configs } = useMyEditor({
+  console.log(form.watch("value"));
+
+  const { editor, editorMode, getHeadings } = useMyEditor({
     placeholder: "test",
-    onChange: (html) => {
-      form.setValue("value", html);
-    },
+
     enableImage: true,
   });
 
@@ -35,7 +35,6 @@ export default function App() {
       <MyToolbar
         editor={editor}
         editorMode={editorMode}
-        {...configs}
         uploadCallback={async (e) => {
           return await imgUploader(e, "blog");
         }}
