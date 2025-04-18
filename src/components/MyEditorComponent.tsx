@@ -1,7 +1,7 @@
 // MyEditorComponents.tsx
 import { Editor, EditorContent } from "@tiptap/react";
-import { cn } from "@/lib/utils";
-import Toolbar from "@/components/ToolBar";
+import { cn } from "../lib/utils";
+import Toolbar from "../components/ToolBar";
 
 export const MyToolbar = ({
   editor,

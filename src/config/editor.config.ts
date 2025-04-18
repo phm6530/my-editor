@@ -17,7 +17,7 @@ import ts from "highlight.js/lib/languages/typescript";
 import html from "highlight.js/lib/languages/xml";
 import Link from "@tiptap/extension-link";
 import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
-import { UseMyEditorProps } from "@/hooks/useMyEditor";
+import { UseMyEditorProps } from "../hooks/useMyEditor";
 import Placeholder from "@tiptap/extension-placeholder";
 
 const lowlight = createLowlight(common);

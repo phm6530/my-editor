@@ -1,6 +1,6 @@
 import { useLayoutEffect, useRef } from "react";
 import { Editor, useEditor } from "@tiptap/react";
-import { extensionsConfig } from "@/config/editor.config";
+import { extensionsConfig } from "../config/editor.config";
 
 export type UseMyEditorProps = {
   editorMode?: "editor" | "view";

@@ -21,7 +21,7 @@ import { ChangeEvent, useCallback, useRef } from "react";
 import { cn } from "../lib/utils";
 import { SelectList } from "./shared/select-list";
 import { TooptipBtn } from "./shared/tootip-btn";
-import { UseMyEditorProps } from "@/hooks/useMyEditor";
+import { UseMyEditorProps } from "../hooks/useMyEditor";
 export default function Toolbar({
   editor,
   uploadCallback,
