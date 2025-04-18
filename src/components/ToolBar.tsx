@@ -7,6 +7,7 @@ import {
   Heading1,
   Heading2,
   Heading3,
+  Heading4,
   Image,
   Italic,
   Link,
@@ -137,6 +138,12 @@ export default function Toolbar({
         onclick: () => editor.chain().focus().toggleHeading({ level: 3 }).run(),
         active: editor.isActive("heading", { level: 3 }),
         icon: Heading3,
+      },
+      {
+        toolname: "제목4",
+        onclick: () => editor.chain().focus().toggleHeading({ level: 4 }).run(),
+        active: editor.isActive("heading", { level: 4 }),
+        icon: Heading4,
       },
     ],
     // text style
