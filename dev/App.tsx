@@ -19,7 +19,7 @@ export default function App() {
 
   const form = useForm({
     defaultValues: {
-      value: `<h1 id="heading-1-4bc5fa97-b721-4430-9818-cb0740568f1e" class="heading-lv1">h1</h1><h2 id="heading-2-a3b96125-e096-4f41-b1c8-e4f78869ebab" class="heading-lv2">h2</h2><h3 id="heading-3-c0462dba-927e-4ac4-b26c-6e0cfdc437c4" class="heading-lv3">h3</h3><h4 id="heading-4-49d1eee8-5a33-4754-8017-5e6318a1c9b2" class="heading-lv4">h4</h4>`,
+      value: `testtest`,
     },
   });
   const compRef = useRef<{ getHeadings: () => any }>(null);
@@ -70,11 +70,15 @@ export default function App() {
       <button className="border p-3 cursor-pointer" onClick={handleClick}>
         Get My Json
       </button>
-      <FormProvider {...form}>
-        <Components ref={compRef} />
-      </FormProvider>
-      <div className="mt-[300px]">{json && TocRender(json)}</div>
-      <pre>{JSON.stringify(json, null, 3)}</pre>
+
+      <div className="grid grid-cols-2">
+        <FormProvider {...form}>
+          <Components ref={compRef} />
+        </FormProvider>
+        <div className="border ">
+          <div className="sticky top-0">{TocRender(json)}</div>
+        </div>
+      </div>
     </div>
   );
 }

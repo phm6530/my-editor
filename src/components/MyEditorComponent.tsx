@@ -2,7 +2,7 @@ import { Editor, EditorContent } from "@tiptap/react";
 import { cn } from "../lib/utils";
 import Toolbar from "../components/ToolBar";
 import { useCallback, useEffect, useRef } from "react";
-import useDebounce from "../hooks/useDebounce";
+import useDebounce from "@/hooks/useDebounce";
 
 export const MyToolbar = ({
   editor,
@@ -44,13 +44,15 @@ export const MyEditorContent = ({
   const { debounce } = useDebounce();
 
   useEffect(() => {
+    if (!editor) return;
+    editor.setEditable(editorMode === "editor");
+  }, [editor, editorMode]);
+
+  useEffect(() => {
     if (!editor || !value || initialized.current) return;
 
-    const isEmpty = editor.getHTML() === "<p></p>";
-    if (isEmpty) {
-      editor.commands.setContent(value);
-      initialized.current = true;
-    }
+    editor.commands.setContent(value);
+    initialized.current = true;
   }, [editor, value]);
 
   const handleUpdate = useCallback(() => {

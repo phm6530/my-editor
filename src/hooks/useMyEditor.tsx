@@ -46,25 +46,29 @@ export default function useMyEditor({
   // 목차 추출 도구
   const getHeadings = () => {
     if (!editorRef.current) return [];
-
-    const htmlString = editorRef.current.getHTML();
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(htmlString, "text/html");
-
-    const heads = Array.from(doc.querySelectorAll(".heading")) as HTMLElement[];
+    const test = document.querySelector(".ProseMirror");
+    const heads = Array.from(
+      test.querySelectorAll(".heading")
+    ) as HTMLElement[];
 
     const tree: NewList[] = [];
     let tempGroup: Record<number, NewList> = {};
 
     for (const head of heads) {
       const level = Number(head.tagName.replace("H", ""));
+      const text = head.textContent?.trim() ?? "";
+
+      // ✅ 내용 없는 heading 제외
+      if (!text) continue;
+
       const node: NewList = {
         id: head.id,
         level,
-        text: head.textContent?.trim() ?? "",
+        text,
         children: [],
       };
 
+      // 이하 트리 구조 연결 로직 유지
       for (const lvl in tempGroup) {
         if (+lvl >= level) {
           delete tempGroup[+lvl];
