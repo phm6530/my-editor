@@ -2,7 +2,7 @@ import { Editor, EditorContent } from "@tiptap/react";
 import { cn } from "../lib/utils";
 import Toolbar from "../components/ToolBar";
 import { useCallback, useEffect, useRef } from "react";
-import useDebounce from "@/hooks/useDebounce";
+import useDebounce from "../hooks/useDebounce";
 
 export const MyToolbar = ({
   editor,
