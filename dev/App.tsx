@@ -3,64 +3,78 @@
 import "../src/global.css";
 import "../src/style/editor.css";
 
-import { MyEditorContent, MyToolbar, useMyEditor } from "@/index";
-import { useForm } from "react-hook-form";
-import { imgUploader } from "./uploadhandler";
-import { useEffect, useState } from "react";
+import { FormProvider, useForm } from "react-hook-form";
+import { useEffect, useRef, useState } from "react";
+import Components from "./Components";
+
+type TocItem = {
+  id: string;
+  level: number;
+  text: string;
+  children: TocItem[];
+};
 
 export default function App() {
   const [json, setJson] = useState<any>();
+
   const form = useForm({
     defaultValues: {
-      value: `<p>ddsdfasdfsdaf</p><p>sdfa</p><p>dsa</p><p>gs</p><p>asdg</p><p>gsda</p><h1 id="heading-1" class="heading-lv1">h1</h1><h2 id="heading-2" class="heading-lv2">h2h</h2><h3 id="heading-3" class="heading-lv3">h3</h3><h4 id="heading-4" class="heading-lv4">h34</h4>`,
+      value: `<h1 id="heading-1-4bc5fa97-b721-4430-9818-cb0740568f1e" class="heading-lv1">h1</h1><h2 id="heading-2-a3b96125-e096-4f41-b1c8-e4f78869ebab" class="heading-lv2">h2</h2><h3 id="heading-3-c0462dba-927e-4ac4-b26c-6e0cfdc437c4" class="heading-lv3">h3</h3><h4 id="heading-4-49d1eee8-5a33-4754-8017-5e6318a1c9b2" class="heading-lv4">h4</h4>`,
     },
   });
+  const compRef = useRef<{ getHeadings: () => any }>(null);
 
-  // console.log(form.watch());
-
-  const { editor, editorMode, getHeadings } = useMyEditor({
-    placeholder: "test",
-    content: form.getValues("value"),
-    enableImage: true,
-    onChange: (html) => form.setValue("value", html),
-  });
-
-  useEffect(() => {
-    if (editor) {
-      const test = getHeadings();
-      console.log(test);
-      setJson(test);
-    }
-  }, [editor]);
-
-  const t = () => {
-    const test = getHeadings();
-    console.log(test);
-    setJson(test);
+  const handleClick = () => {
+    const result = compRef.current?.getHeadings();
+    setJson(result);
   };
 
-  // 전체 에디터 사용
-  // return <MyEditor editor={editor} editorMode={editorMode} {...configs} />;
+  useEffect(() => {
+    setTimeout(() => {
+      handleClick();
+    }, 0);
+  }, []);
 
-  // 또는 개별 컴포넌트 사용
+  const scrollToHeading = (id: string) => {
+    const target = document.getElementById(id);
+    if (target) {
+      const yOffset = -80;
+      const y =
+        target.getBoundingClientRect().top + window.pageYOffset + yOffset;
+      window.scrollTo({ top: y, behavior: "smooth" });
+    }
+  };
+
+  const TocRender = (toc: TocItem[]) => {
+    if (toc.length === 0) return null;
+
+    return (
+      <ul className="ml-4 list-disc">
+        {toc.map((item) => (
+          <li key={item.id}>
+            <button
+              className="text-sm hover:underline"
+              onClick={() => scrollToHeading(item.id)}
+            >
+              {item.text}
+            </button>
+            {item.children.length > 0 && TocRender(item.children)}
+          </li>
+        ))}
+      </ul>
+    );
+  };
+
   return (
     <div>
-      <button onClick={t}>test</button>
-      <MyToolbar
-        editor={editor}
-        editorMode={editorMode}
-        uploadCallback={async (e) => {
-          return await imgUploader(e, "blog");
-        }}
-      />
-      <div className="custom-wrapper">
-        <MyEditorContent
-          editor={editor}
-          editorMode={editorMode}
-          {...form.register("value")}
-        />
-      </div>{" "}
-      <pre className="border p-5">{JSON.stringify(json, null, 2)}</pre>
+      <button className="border p-3 cursor-pointer" onClick={handleClick}>
+        Get My Json
+      </button>
+      <FormProvider {...form}>
+        <Components ref={compRef} />
+      </FormProvider>
+      <div className="mt-[300px]">{json && TocRender(json)}</div>
+      <pre>{JSON.stringify(json, null, 3)}</pre>
     </div>
   );
 }

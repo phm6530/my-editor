@@ -1,7 +1,6 @@
-import { useEffect, useLayoutEffect, useRef } from "react";
-import { Editor, JSONContent, useEditor } from "@tiptap/react";
+import { useEffect, useRef } from "react";
+import { Editor, useEditor } from "@tiptap/react";
 import { extensionsConfig } from "../config/editor.config";
-import { debounce } from "lodash"; // 또는 직접 구현
 
 export type UseMyEditorProps = {
   editorMode?: "editor" | "view";
@@ -19,50 +18,13 @@ type NewList = {
   text: string;
   children: NewList[];
 };
-const assignHeadingIds = (doc: JSONContent): JSONContent => {
-  let i = 0;
-  const walk = (node: JSONContent): JSONContent => {
-    if (node.type === "heading") {
-      return {
-        ...node,
-        attrs: {
-          ...node.attrs,
-          id: `heading-${node.attrs.level}-${i++}`,
-        },
-        content: node.content?.map(walk),
-      };
-    }
-
-    if (node.content) {
-      return {
-        ...node,
-        content: node.content.map(walk),
-      };
-    }
-
-    return node;
-  };
-
-  return walk(doc);
-};
 
 export default function useMyEditor({
   editorMode = "editor",
-  content,
-  onChange,
   ...configs
 }: UseMyEditorProps) {
-  const initialized = useRef(false);
-  console.log("content", content);
-
   // control
   const editorRef = useRef<Editor | null>(null);
-  const debouncedChange = useRef(
-    debounce((editor: Editor) => {
-      const html = editor.getHTML();
-      onChange?.(html === "<p></p>" ? "" : html);
-    }, 300)
-  ).current;
 
   const control = useEditor({
     extensions: extensionsConfig({ ...configs }),
@@ -71,60 +33,63 @@ export default function useMyEditor({
         beforeinput: () => true,
       },
     },
-
-    onUpdate: ({ editor }) => {
-      editorRef.current = editor;
-      if (editorMode === "editor") {
-        debouncedChange(editor);
-      }
-    },
-    ...(editorMode === "view" && {
-      editable: false,
-    }),
     immediatelyRender: false,
   });
 
+  // 목차 추출위해 만듬
   useEffect(() => {
     if (control) {
       editorRef.current = control;
     }
   }, [control]);
 
-  useLayoutEffect(() => {
-    if (control && content && !initialized.current) {
-      control.commands.setContent(content);
-      initialized.current = true;
-    }
-  }, [control, content]);
-
   // 목차 추출 도구
   const getHeadings = () => {
     if (!editorRef.current) return [];
-    const doc = editorRef.current.getJSON();
 
-    const heads = doc.content.filter((e) => e.type === "heading");
+    const htmlString = editorRef.current.getHTML();
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(htmlString, "text/html");
+
+    const heads = Array.from(doc.querySelectorAll(".heading")) as HTMLElement[];
 
     const tree: NewList[] = [];
-    const parentByLevel: Record<number, NewList> = {};
+    let tempGroup: Record<number, NewList> = {};
 
-    for (const [i, head] of heads.entries()) {
-      const node = {
-        id: `heading-${head.attrs.level}-${i}`,
-        level: head.attrs.level,
-        text: head.content?.map((c) => c.text).join("") ?? "",
+    for (const head of heads) {
+      const level = Number(head.tagName.replace("H", ""));
+      const node: NewList = {
+        id: head.id,
+        level,
+        text: head.textContent?.trim() ?? "",
         children: [],
       };
 
-      const parentLevel = head.attrs.level - 1;
-      const parent = parentByLevel[parentLevel];
+      for (const lvl in tempGroup) {
+        if (+lvl >= level) {
+          delete tempGroup[+lvl];
+        }
+      }
+
+      if (level === 1) {
+        tempGroup = {};
+      }
+
+      let parent: NewList | undefined;
+      for (let lvl = level - 1; lvl >= 1; lvl--) {
+        if (tempGroup[lvl]) {
+          parent = tempGroup[lvl];
+          break;
+        }
+      }
 
       if (parent) {
         parent.children.push(node);
       } else {
-        tree.push(node); // 상위 부모가 없으면 root에 넣음
+        tree.push(node);
       }
 
-      parentByLevel[head.attrs.level] = node; // 현재 레벨에 노드 등록
+      tempGroup[level] = node;
     }
 
     return tree;

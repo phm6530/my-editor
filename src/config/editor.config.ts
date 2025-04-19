@@ -1,4 +1,4 @@
-import { AnyExtension } from "@tiptap/react";
+import { AnyExtension, mergeAttributes } from "@tiptap/react";
 import TextAlign from "@tiptap/extension-text-align";
 import FontFamily from "@tiptap/extension-font-family";
 import TextStyle from "@tiptap/extension-text-style";
@@ -7,6 +7,7 @@ import Heading from "@tiptap/extension-heading";
 import StarterKit from "@tiptap/starter-kit";
 import Youtube from "@tiptap/extension-youtube";
 // import Placeholder from "@tiptap/extension-placeholder";
+import { v4 as uuidv4 } from "uuid";
 import Underline from "@tiptap/extension-underline";
 import Image from "@tiptap/extension-image";
 import Mention from "@tiptap/extension-mention";
@@ -37,15 +38,23 @@ export const extensionsConfig = ({
   "onChange" | "content" | "editorMode"
 >): AnyExtension[] => {
   const CustomHeading = Heading.extend({
+    addAttributes() {
+      return {
+        ...this.parent?.(), // 기존 Heading의 속성 유지
+        id: {
+          default: () => `heading-${uuidv4()}`,
+        },
+      };
+    },
     renderHTML({ node, HTMLAttributes }) {
       const level = node.attrs.level;
+
       return [
         `h${level}`,
-        {
-          ...HTMLAttributes,
-          id: `heading-${level}`,
-          class: `heading-lv${level}`,
-        },
+        mergeAttributes(HTMLAttributes, {
+          class: "heading",
+          lev: level,
+        }),
         0,
       ];
     },
