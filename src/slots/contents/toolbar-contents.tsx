@@ -83,7 +83,7 @@ export const MainToolbarContent = ({
       <ToolbarSeparator />
 
       <ToolbarGroup>
-        <ImageUploadButton text="Add" />
+        <ImageUploadButton />
         <YoutubeButton />
       </ToolbarGroup>
 

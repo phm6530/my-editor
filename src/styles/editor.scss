@@ -1,5 +1,7 @@
-.test {
-  background: red;
+.simple-editor-content {
+  margin-top: 1rem;
+  min-height: 300px;
+  cursor: text;
 }
 .tiptap {
   p {
@@ -21,7 +23,6 @@
   }
 
   img {
-    border: 1px solid red;
   }
   /* Heading styles */
   h1,
@@ -54,12 +55,13 @@
 
   p {
     code {
-      background: var(--color-secondary-foreground);
+      // background: var(--tt-brand-color-400);
       border-radius: 0.5rem;
+      border: 1px solid #f19f9f;
       color: #f45858;
       font-family: "JetBrainsMono", monospace;
       font-size: 0.9rem;
-      padding: 0.45rem 0.55rem;
+      padding: 0.25rem 0.15rem;
     }
   }
 
@@ -77,10 +79,10 @@
 
   //   code Highlight
   pre {
-    background: var(--color-secondary-foreground);
+    background: var(--black);
     border-radius: 0.5rem;
-    color: #fff;
-
+    color: var(--white);
+    font-family: "JetBrainsMono", monospace;
     margin: 1.5rem 0;
     padding: 0.75rem 1rem;
 
@@ -94,7 +96,7 @@
     /* Code styling */
     .hljs-comment,
     .hljs-quote {
-      color: #737373;
+      color: #616161;
     }
 
     .hljs-variable,
@@ -157,12 +159,37 @@
   }
 
   // link
-  a span {
+  a {
     color: var(--tt-brand-color-400);
     cursor: pointer;
 
     &:hover {
       color: var(--tt-brand-color-700);
+    }
+  }
+
+  ul[data-type="taskList"] {
+    list-style: none;
+    margin-left: 0;
+    padding: 0;
+
+    li {
+      align-items: center;
+      display: flex;
+
+      > label {
+        flex: 0 0 auto;
+        margin-right: 0.5rem;
+        user-select: none;
+      }
+
+      > div {
+        flex: 1 1 auto;
+      }
+    }
+
+    input[type="checkbox"] {
+      cursor: pointer;
     }
   }
 

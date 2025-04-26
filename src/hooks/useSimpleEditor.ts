@@ -32,6 +32,9 @@ import js from "highlight.js/lib/languages/javascript";
 import ts from "highlight.js/lib/languages/typescript";
 import html from "highlight.js/lib/languages/xml";
 import Placeholder from "@tiptap/extension-placeholder";
+import Heading from "@tiptap/extension-heading";
+import { v4 as uuidv4 } from "uuid";
+
 const lowlight = createLowlight(all);
 
 lowlight.register("html", html);
@@ -39,11 +42,71 @@ lowlight.register("css", css);
 lowlight.register("js", js);
 lowlight.register("ts", ts);
 
+type TocListProps = {
+  level: number;
+  id: string;
+  text: string;
+  children: TocListProps[];
+};
+
 /**
  *
  * Callback은 String 반환 하도록
  *
  */
+
+// 목차 반환
+const getHeadings = () => {
+  const test = document.querySelector(".ProseMirror");
+  const heads = Array.from(test.querySelectorAll(".heading")) as HTMLElement[];
+
+  const tree: TocListProps[] = [];
+  let tempGroup: Record<number, TocListProps> = {};
+
+  for (const head of heads) {
+    const level = Number(head.tagName.replace("H", ""));
+    const text = head.textContent?.trim() ?? "";
+
+    if (!text) continue;
+
+    const node: TocListProps = {
+      id: head.id,
+      level,
+      text,
+      children: [],
+    };
+
+    // 이하 트리 구조 연결 로직 유지
+    for (const lvl in tempGroup) {
+      if (+lvl >= level) {
+        delete tempGroup[+lvl];
+      }
+    }
+
+    if (level === 1) {
+      tempGroup = {};
+    }
+
+    let parent: TocListProps | undefined;
+    for (let lvl = level - 1; lvl >= 1; lvl--) {
+      if (tempGroup[lvl]) {
+        parent = tempGroup[lvl];
+        break;
+      }
+    }
+
+    if (parent) {
+      parent.children.push(node);
+    } else {
+      tree.push(node);
+    }
+
+    tempGroup[level] = node;
+  }
+
+  return tree;
+};
+
 export function useSimpleEditor({
   placeholder,
   uploadCallback,
@@ -51,6 +114,22 @@ export function useSimpleEditor({
   placeholder?: string;
   uploadCallback?: (file: File) => Promise<string>;
 } = {}) {
+  const CustomHeading = Heading.extend({
+    renderHTML({ node, HTMLAttributes }) {
+      const level = node.attrs.level;
+      return [
+        `h${level}`,
+        {
+          ...HTMLAttributes,
+          id: `heading-${uuidv4()}`,
+          class: `heading heading-lv${level}`,
+          lev: level,
+        },
+        0,
+      ];
+    },
+  });
+
   const editor = useEditor({
     immediatelyRender: false,
     editorProps: {
@@ -62,7 +141,8 @@ export function useSimpleEditor({
       },
     },
     extensions: [
-      StarterKit.configure({ codeBlock: false }),
+      StarterKit.configure({ codeBlock: false, heading: false }),
+      CustomHeading,
       TextAlign.configure({ types: ["heading", "paragraph"] }),
       Underline,
       TaskList,
@@ -84,7 +164,9 @@ export function useSimpleEditor({
               accept: "image/*",
               maxSize: MAX_FILE_SIZE,
               limit: 3,
-              upload: (...arg) => handleImageUpload(...arg, uploadCallback),
+              upload: (...arg) => {
+                return handleImageUpload(...arg, uploadCallback);
+              },
               onError: (error) => console.error("Upload failed:", error),
             }),
           ]
@@ -98,5 +180,5 @@ export function useSimpleEditor({
     ],
   });
 
-  return { editor };
+  return { editor, getHeadings };
 }

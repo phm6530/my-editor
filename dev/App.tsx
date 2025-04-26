@@ -69,14 +69,12 @@ export default function App() {
     );
   };
 
-  const { editor } = useSimpleEditor({
+  const { editor, getHeadings } = useSimpleEditor({
     placeholder: "내용을 기재해주세요.",
     uploadCallback: async (file: File) => {
       return await imgUploader(file, "blog");
     },
   });
-
-  console.log(form.formState.errors);
 
   return (
     <div style={{ width: "100%" }}>
@@ -128,6 +126,13 @@ export default function App() {
         })}
       >
         제출
+      </button>
+      <button
+        onClick={() => {
+          console.log(getHeadings());
+        }}
+      >
+        ddd
       </button>
     </div>
   );

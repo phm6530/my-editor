@@ -41,7 +41,7 @@ export const YoutubeButton = React.forwardRef<
       {...buttonProps}
       ref={ref}
     >
-      <Youtube />
+      <Youtube size={20} />
       {/* {children || (
         <>
           <Icon className="tiptap-button-icon" />

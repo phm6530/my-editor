@@ -44,12 +44,19 @@ export default function SimpleEditorContents({
     };
   }, [editor, onChange, handleUpdate]);
 
+  const handleEditorClick = () => {
+    if (editorMode === "editor") {
+      editor.chain().focus().run();
+    }
+  };
+
   return (
     <EditorContent
       editor={editor}
       role="presentation"
       disabled={editorMode === "view"}
       className={`simple-editor-content ${className && className}`}
+      onClick={handleEditorClick}
       {...config}
     />
   );

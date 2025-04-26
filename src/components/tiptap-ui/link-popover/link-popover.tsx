@@ -160,7 +160,7 @@ const LinkMain: React.FC<LinkMainProps> = ({
     <>
       <input
         type="url"
-        placeholder="Paste a link..."
+        placeholder="Url을 입력하세요"
         value={url}
         onChange={(e) => setUrl(e.target.value)}
         onKeyDown={handleKeyDown}

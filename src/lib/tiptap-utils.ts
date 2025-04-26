@@ -31,25 +31,29 @@ export const handleImageUpload = async (
 ): Promise<string> => {
   if (!cb) throw new Error("Callback is missing.");
 
-  const fakeProgress = async () => {
-    for (let progress = 0; progress <= 90; progress += 10) {
-      if (abortSignal?.aborted) {
-        throw new Error("Upload cancelled");
+  try {
+    const fakeProgress = async () => {
+      for (let progress = 0; progress <= 90; progress += 10) {
+        if (abortSignal?.aborted) {
+          throw new Error("Upload cancelled");
+        }
+        await new Promise((resolve) => setTimeout(resolve, 100));
+        onProgress?.({ progress });
       }
-      await new Promise((resolve) => setTimeout(resolve, 100));
-      onProgress?.({ progress });
-    }
-  };
+    };
 
-  const uploadTask = cb(_file); // 파일 바로 업로드
-  const progressTask = fakeProgress(); // 동시에 가짜 progress 돌림
+    const uploadTask = cb(_file);
+    const progressTask = fakeProgress();
 
-  const [uploadedUrl] = await Promise.all([uploadTask, progressTask]);
+    const [uploadedUrl] = await Promise.all([uploadTask, progressTask]);
 
-  // 업로드 완료되면 100% 진행률 마무리
-  onProgress?.({ progress: 100 });
+    onProgress?.({ progress: 100 });
 
-  return uploadedUrl;
+    return uploadedUrl;
+  } catch (err) {
+    onProgress?.({ progress: 0 });
+    throw err;
+  }
 };
 
 /**
