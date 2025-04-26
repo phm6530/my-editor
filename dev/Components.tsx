@@ -26,7 +26,14 @@ export const Components = forwardRef(
           editor={editor}
           editorMode={editorMode}
           uploadCallback={async (e) => {
-            return await imgUploader(e, "blog");
+            try {
+              const test = await imgUploader(e, "blog");
+
+              console.log(test);
+              return test;
+            } catch (err) {
+              alert(err);
+            }
           }}
           {...configs}
         />

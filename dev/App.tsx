@@ -1,11 +1,10 @@
 "use client";
 
-import "../src/global.css";
-import "../src/style/editor.css";
-
-import { FormProvider, useForm } from "react-hook-form";
+import "../src/styles/editor.scss";
+import { SimpleEditor } from "@/components/tiptap-templates/simple/simple-editor";
+import { useForm } from "react-hook-form";
 import { useEffect, useRef, useState } from "react";
-import Components from "./Components";
+import { imgUploader } from "./uploadhandler";
 
 type TocItem = {
   id: string;
@@ -67,7 +66,7 @@ export default function App() {
 
   return (
     <div>
-      <button className="border p-3 cursor-pointer" onClick={handleClick}>
+      {/* <button className="border p-3 cursor-pointer" onClick={handleClick}>
         Get My Json
       </button>
 
@@ -76,9 +75,23 @@ export default function App() {
           <Components ref={compRef} />
         </FormProvider>
         <div className="border ">
-          <div className="sticky top-0">{TocRender(json)}</div>
+          <div className="sticky top-0">{json && TocRender(json)}</div>
         </div>
-      </div>
+      </div> */}
+
+      <SimpleEditor
+        placeholder="내용을 기재해주세요"
+        uploadCallback={async (file) => {
+          try {
+            const test = await imgUploader(file, "blog");
+
+            console.log(test);
+            return test;
+          } catch (err) {
+            alert(err);
+          }
+        }}
+      />
     </div>
   );
 }

@@ -6,21 +6,21 @@ import ImageResize from "tiptap-extension-resize-image";
 import Heading from "@tiptap/extension-heading";
 import StarterKit from "@tiptap/starter-kit";
 import Youtube from "@tiptap/extension-youtube";
-// import Placeholder from "@tiptap/extension-placeholder";
 import Underline from "@tiptap/extension-underline";
-import Image from "@tiptap/extension-image";
 import Mention from "@tiptap/extension-mention";
+
+import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
+import { UseMyEditorProps } from "../hooks/useMyEditor";
+import Placeholder from "@tiptap/extension-placeholder";
+import { v4 as uuidv4 } from "uuid";
+import OrderedList from "@tiptap/extension-ordered-list";
+
 import { common, createLowlight } from "lowlight";
 import css from "highlight.js/lib/languages/css";
 import js from "highlight.js/lib/languages/javascript";
 import ts from "highlight.js/lib/languages/typescript";
 import html from "highlight.js/lib/languages/xml";
 import Link from "@tiptap/extension-link";
-import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
-import { UseMyEditorProps } from "../hooks/useMyEditor";
-import Placeholder from "@tiptap/extension-placeholder";
-import { v4 as uuidv4 } from "uuid";
-
 const lowlight = createLowlight(common);
 
 lowlight.register("html", html);
@@ -57,9 +57,12 @@ export const extensionsConfig = ({
     StarterKit.configure({
       codeBlock: false,
       heading: false,
+      orderedList: false,
     }),
+    OrderedList,
+    // ListKeymap,
     CustomHeading,
-    ImageResize,
+    ...(enableImage ? [ImageResize] : []),
     ...(enableCodeBlock
       ? [
           CodeBlockLowlight.configure({
@@ -88,7 +91,7 @@ export const extensionsConfig = ({
       },
       //   suggestion,
     }),
-    ...(enableImage ? [Image] : []),
+
     Underline,
     TextStyle,
     FontFamily,

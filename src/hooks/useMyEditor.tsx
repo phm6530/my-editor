@@ -58,7 +58,6 @@ export default function useMyEditor({
       const level = Number(head.tagName.replace("H", ""));
       const text = head.textContent?.trim() ?? "";
 
-      // ✅ 내용 없는 heading 제외
       if (!text) continue;
 
       const node: NewList = {
