@@ -55,11 +55,12 @@
 
   p {
     code {
-      // background: var(--tt-brand-color-400);
+      // background: var(--tt-scrollbar-color);
       border-radius: 0.5rem;
-      border: 1px solid #f19f9f;
-      color: #f45858;
-      font-family: "JetBrainsMono", monospace;
+      font-family: monospace;
+      font-weight: bold;
+      color: #eb5757;
+      border: 1px solid #eb5757;
       font-size: 0.9rem;
       padding: 0.25rem 0.15rem;
     }

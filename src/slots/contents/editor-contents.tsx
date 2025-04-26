@@ -34,11 +34,10 @@ export default function SimpleEditorContents({
     onChange(html === "<p></p>" ? "" : html);
   }, [editor, onChange]);
 
+  // UpDate
   useEffect(() => {
     if (!editor || !onChange) return;
-
     editor.on("update", handleUpdate);
-
     return () => {
       editor.off("update", handleUpdate);
     };
@@ -50,14 +49,20 @@ export default function SimpleEditorContents({
     }
   };
 
+  // View모드 확인
+  useEffect(() => {
+    if (!editor) return;
+    editor.setEditable(editorMode === "editor");
+  }, [editor, editorMode]);
+
   return (
     <EditorContent
       editor={editor}
       role="presentation"
-      disabled={editorMode === "view"}
       className={`simple-editor-content ${className && className}`}
-      onClick={handleEditorClick}
+      onClick={() => handleEditorClick()}
       {...config}
+      disabled={editorMode === "view"}
     />
   );
 }
