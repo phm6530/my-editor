@@ -1,1 +1,1 @@
-export { SimpleEditor } from "@/components/tiptap-templates/simple/simple-editor";
+export { SimpleEditor } from "./components/tiptap-templates/simple/simple-editor";
