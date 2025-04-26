@@ -1,19 +1,6 @@
-/* tiptap Custom Editor - */
-@use "./variables";
-@use "./keyframe-animations";
-
-/* @use */
-@use "./button/button-colors.scss";
-@use "./button/button-group.scss";
-@use "./button/button.scss";
-@use "./highlight/highlight-popover.scss";
-@use "./link-popover/link-popover.scss";
-@use "./tooltip/tooltip.scss";
-@use "./separator/separator.scss";
-@use "./popover/popover.scss";
-@use "./dropdown-menu/dropdown-menu.scss";
-@use "./toolbar/toolbar.scss";
-
+.test {
+  background: red;
+}
 .tiptap {
   p {
     line-height: 1.7;

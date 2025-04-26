@@ -12,9 +12,8 @@
     "outDir": "dist",
     "moduleResolution": "Node",
     "esModuleInterop": true,
-    "emitDeclarationOnly": true,
     "skipLibCheck": true
   },
-  "include": ["src"]
+  "include": ["src", "dev"]
   // "exclude": ["dev", "dist", "node_modules"]
 }

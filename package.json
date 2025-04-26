@@ -7,7 +7,8 @@
   "type": "module",
   "scripts": {
     "build": "tsup",
-    "dev": "tsup --watch",
+    "build:scss": "sass src/styles/global.scss dist/editor.css",
+    "dev": "vite",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
