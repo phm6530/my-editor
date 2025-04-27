@@ -110,11 +110,11 @@ const getHeadings = () => {
 export function useSimpleEditor({
   placeholder,
   uploadCallback,
-  readonly = false,
+  editable,
 }: {
   placeholder?: string;
   uploadCallback?: (file: File) => Promise<string>;
-  readonly?: boolean;
+  editable?: boolean;
 } = {}) {
   const CustomHeading = Heading.extend({
     renderHTML({ node, HTMLAttributes }) {
@@ -150,9 +150,8 @@ export function useSimpleEditor({
       TaskList,
       TaskItem.configure({ nested: true }),
       Highlight.configure({ multicolor: true }),
-      ...(!readonly ? [ImageResize] : []),
+      ImageResize,
       Typography,
-
       Superscript,
       Subscript,
       Selection,
@@ -180,6 +179,7 @@ export function useSimpleEditor({
       }),
       Link.configure({ openOnClick: false }),
     ],
+    editable,
   });
 
   return { editor, getHeadings };
