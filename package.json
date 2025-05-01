@@ -33,8 +33,8 @@
     "class-variance-authority": "^0.7.1",
     "classnames": "^2.5.1",
     "lucide-react": "^0.487.0",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react": ">=18.0.0",
+    "react-dom": ">=18.0.0"
   },
   "files": [
     "dist",
