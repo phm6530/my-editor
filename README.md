@@ -1,5 +1,12 @@
 # Tip Tap Editor Custom
 
+----------------------
+
+useSimpleEditor,
+
+----------------------
+
+
 @use Package
 
 @tailwind ^4.1.3
