@@ -150,7 +150,9 @@ export function useSimpleEditor({
       TaskList,
       TaskItem.configure({ nested: true }),
       Highlight.configure({ multicolor: true }),
-      ImageResize,
+      ImageResize.configure({
+        inline: true,
+      }),
       Typography,
       Superscript,
       Subscript,
