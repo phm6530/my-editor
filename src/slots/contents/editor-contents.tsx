@@ -1,7 +1,7 @@
 import { useTiptapEditor } from "@/hooks/use-tiptap-editor";
 
 import { Editor, EditorContent } from "@tiptap/react";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect } from "react";
 
 export default function SimpleEditorContents({
   editor: providedEditor,
