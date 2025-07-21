@@ -22,7 +22,214 @@ export default function App() {
   const form = useForm({
     defaultValues: {
       title: "",
-      value: `<p><br></p><p>[AWS] 서브도메인 생성 + ELB SSL 인증</p><p><br></p><p>AWS는 Route53에서 도메인을 구매하여 연동할 수 있고 추가로 내부에서 구매한 Domain에 대한 SSL인증이 매우 간편하다.</p><p>EC2의 경우는 인스턴스를 생성하여 SSL 인증을 도메인에서 Https 암호화를 진행하고</p><p>ELB를 이용하여 복호화 하여 웹서버로 전달하는 방식을 사용해야한다.</p><p><br></p><p>이 부분도 과금이 되지만 SSL인증서를 따로 관리안하고 중앙집중관리 형식으로 손쉽게 관리할 수 있다라는 점이 가장 큰 장점이라</p><p>난 외부에서 SSL 인증을 하는 것을 택했다.</p><p><br></p><p><br></p><p><br></p><p><br></p><p><strong class="ql-size-large">1️⃣ 서브도메인 생성</strong></p><p>이왕 내가 구매한 도메인에 서브도메인을 만들어서 Api 전용 도메인을 만들었다.</p><p><br></p><p><br></p><p>✔️ Routes 53 &gt; 호스팅 영역 &gt; 호스팅 영역 생성</p><p><img src="https://d33h8icwcso2tj.cloudfront.net/uploads/blog/84a76eb0-4f44-4c35-9235-c84d05d62939/__-__-1_20240616094852.jpg"></p><p><br></p><p><br></p><p><br></p><p><br></p><p>✔️생성된 서브도메인 클릭하여 네임서버 복사하여 Main 도메인 내 "NS 레코드 삽입"</p><p>*서브도메인 내에 독립적으로 사용하기 위해 서브도메인에 대한 DNS 관리 권한을 위임한다.</p><p><img src="https://d33h8icwcso2tj.cloudfront.net/uploads/blog/84a76eb0-4f44-4c35-9235-c84d05d62939/__-__-1_20240616095112.jpg"></p><p><br></p><p><br></p><p><br></p><p><br></p><p>✔️ 반영 이후에는 ACM의 탭에서 서브도메인에 대한 SSL 인증서 발급</p><p><img src="https://d33h8icwcso2tj.cloudfront.net/uploads/blog/84a76eb0-4f44-4c35-9235-c84d05d62939/__-__-2_20240616095545.jpg"></p><p><br></p><p><br></p><p><br></p><p><br></p><p><strong class="ql-size-large">2️⃣ EC2 + ELB 설정</strong></p><p>SSL인증을 외부에서 ELB가 복호화하고 http요청을 EC2 인스턴스에 전달하는데 이는 외부에서 https 요청을 복호화하고 </p><p>EC2 내에서는 복호화된 상태의 "평문" 으로 요청을 하기 때문에 그룹을 80port만 명시하면 된다. </p><p>또 추가로 웹서버 아파치나 , nginx에 다른 서버설정을 하지 않아도 된다.</p><p><br></p><p><br></p><p>✔️ EC2 &gt; 대상 그룹 생성에서 인스턴스 / 포트 80 설정</p><p><img src="https://d33h8icwcso2tj.cloudfront.net/uploads/blog/8ed9fadf-b477-4e39-bc5b-41512ab24515/a1_20240616101020.jpg"></p><p><br></p><p><img src="https://d33h8icwcso2tj.cloudfront.net/uploads/blog/8ed9fadf-b477-4e39-bc5b-41512ab24515/a2_20240616101025.jpg"></p><p><br></p><p><br></p><p>✔️ 다음페이지에 인스턴스 라우팅 포트 "80" 설정  "아래에 보류 중인 것으로 포함" 클릭</p><p><img src="https://d33h8icwcso2tj.cloudfront.net/uploads/blog/8ed9fadf-b477-4e39-bc5b-41512ab24515/vvv_20240616101201.jpg"></p><p><br></p><p><br></p><p><br></p><p><br></p><p>보안 그룹이 생성되었다면 ELB을 설정하자</p><p><br></p><p><strong>✔️EC2 인스턴스 생성이후 리전의 가용영역을 선택한다. 전부 다 선택했다.</strong></p><p><img src="https://d33h8icwcso2tj.cloudfront.net/uploads/blog/8ed9fadf-b477-4e39-bc5b-41512ab24515/b1_20240616101424.jpg"></p><p><br></p><p><br></p><p><br></p><p><strong>✔️ 보안그룹과 리스너를 설정하자</strong></p><p>보안그룹은 인바운드, 아웃바인드를 EC2기준으로 설정 해둔 것이 존재한다면 그 보안그룹을 선택하자.</p><p>나는 TCP 443, 80포트는 0.0.0.0/0과 SSH는 내 전용 ip만 접속하도록 인바운드 열어두었고 아웃바운드는 누구나 접속할 수 있도록 허용하였다.</p><p><img src="https://d33h8icwcso2tj.cloudfront.net/uploads/blog/8ed9fadf-b477-4e39-bc5b-41512ab24515/b2_20240616101832.jpg"></p><p><br></p><p>리스너의 경우 로드밸런서로 연결 "요청" 하는 프로세스이다. SSL 연결을 인증 하는 것이기에 443으로 로드벨런스에 복호화를 요청해야한다.</p><p>그러므로 443을 기재하고 그룹을 이전에 생성하였던 그룹을 선택한다. </p><p>그럼 로드밸런서는 https요청을 복호화하여 내가 설정한 그룹에 http요청을 서버로 보낸다. </p><p><br></p><p><br></p><p><strong>✔️ 인증서 선택</strong></p><p><img src="https://d33h8icwcso2tj.cloudfront.net/uploads/blog/8ed9fadf-b477-4e39-bc5b-41512ab24515/b3_20240616102053.jpg"></p><p><br></p><p><br></p><p><br></p><p>✔️ Route 53에서 레코드생성</p><p>Route53에서 A레코드를 생성하고 "별칭"으로 라우터와 로드밸런싱을 연결한다. </p><p><img src="https://d33h8icwcso2tj.cloudfront.net/uploads/blog/8ed9fadf-b477-4e39-bc5b-41512ab24515/__-__-7_20240616102625.jpg"></p><p><br></p><p>EC2의 ip를 찾기에  A레코드로 설정하고</p><p>엔드포인트를 ELB를 설정 / 리전은 서울 Resion을 선택하고 레코드 생성을 하자. </p><p><br></p><p><br></p><p><br></p><p>이제 로드밸런서 생성하고 DNS가 반영되기 까지 기다리면....</p><p><img src="https://d33h8icwcso2tj.cloudfront.net/uploads/blog/8ed9fadf-b477-4e39-bc5b-41512ab24515/b4_20240616102827.jpg"></p><p><br></p><p><br></p><p>완료!</p><p>이제 프론트에서 http로 요청만 하지않는다면 Mixed에러 없이 잘 통신이 완료 될 것이다. </p><p><br></p><p><br></p><p><br></p><p><br></p><p><br></p><p><br></p><p><br></p><p><br></p><p><br></p><p><br></p><p><br></p><p><br></p>`,
+      value: `d
+
+브라우저 랜더링
+
+어떤 언어로 웹 개발을 하든, 브라우저를 통해 사용자에게 페이지를 제공하게 된다.
+
+브라우저가 최종적으로 화면을 그려 보여지게 되는 것은 CSS, HTML의 형태로 웹사이트를 그리게 된다.
+
+
+
+웹사이트의 화면을 그리는 데엔 비용이 높기 때문에 이를 효율 적으로 관리하기 위하여
+
+React나 JS 같은 Ajax나 가상 DOM을 포함한 라이브러리를 사용한다.
+
+
+
+더 효율적으로 사용하기 위해서는 브라우저 랜더링을 이해하고
+
+랜더링의 각 단계에서 실행되는 React Hook의 실행 컨텍스트를 이해하는 것이
+
+이 React 심화적으로 이해하고 우아한 코드를 작성하는 발돋움이 될 것이다.
+
+
+
+
+
+
+
+
+
+CSSOM과 DOM 트리로 웹페이지는 구성된다.
+
+브라우저 랜더링은 기본적으로 CSS와 HTML만으로 페이지를 그린다.
+
+웹 페이지를 그리기 위해 두 가지의 트리를 구성하는데 html는 DOM 트리, CSS의 CSSOM 생성한다.
+
+
+
+
+
+
+
+이후 두 가지의 트리를 Commit 하며
+
+화면에 보여져야 할 DOM과 CSSOM의 교 집합 된 Render Tree를 구성한다.
+
+Render Tree는 크기를 계산할 요소들의 묶음으로 아직 계산 되지 않은 명세 전 단계이다.
+
+
+
+Render Tree의 요소들을 크기를 계산하는 layout 단계를 거쳐서 최종적으로 Paint 되게 되고,
+
+마지막 GPU을 거쳐 합성(composite) 단계에 거쳐 눈으로 볼 수 있는 화면을 제공한다.
+
+
+
+
+
+
+
+
+
+Layout, Paint 단계에 이해
+
+Layout 단계는 “계산”하여 DOM의 크기를 명세 하는 단계이며, Paint는 스타일을 반영하여 그리는 단계이다.
+
+랜더링 개념으로 보자면 Layout은 DOM의 크기를 계산 하는 것을 ReFlow,
+
+DOM에 크기에 대해 개입하지 않고 스타일링하는 RePaint 가 발생한다.
+
+“Re”가 들어가 오해 할 수 있는데 초기 랜더링 시에도 RePaint, ReFlow가 발생하며 이는 작업 자체를 말한다.
+
+
+
+
+
+Reflow
+
+만약 가변적인 “width:100%” 같은 크기로 설정된 DOM이라면 브라우저의 크기에 따라서 DOM의 크기 또한 재 계산 되어야 하기 때문에
+
+브라우저에 정의된 Api따라 트리거하여 해당 DOM에 대한 Reflow가 발생하게 된다.
+
+
+
+
+
+RePaint
+
+페인트는 계산이 아닌 스타일링 작업이다. 대표적인 작업 속성명을 나열하자면
+
+color, background-color, border-color , visibility ,box-shadow 등이 있고 이들은 전부 크기 계산이 아닌
+
+DOM에 대한 색칠이나 스타일링 작업이다.
+
+
+
+
+
+
+
+
+
+
+
+
+
+Script는 하단이나 “defer”를 사용하자.
+
+브라우저가 DOM과 CSS 트리를 구성하는 순서는 인터프리터 언어처럼 순차적으로 한줄 한줄 실행하게 된다.
+
+한줄씩 파싱 하다 JS 구문을 만나게 된다면 파싱을 중지하고 JS를 실행하게 된다.
+
+
+
+만약에 js로 DOM을 선택하는데 특정 id보다 선택이 우선이라면 당연하게 reffer 에러를 반환 할 것이다.
+
+<script>
+  const el = document.getElementById("Element"); //Error..
+</script>
+
+<div id="Element">타겟</div> 
+
+defer는 파일이 다운로드 되더라도 즉시 실행되지 않고 DOMContentLoaded 이벤트 직전에 실행 되기 때문에
+
+HTML가 파싱된 이후 실행 되기에 reffer에러를 방지 할 수 있다.
+
+만약 파일 형태가 아니라면 body 하단에 위치하여 에러를 방지해야 한다.
+
+
+
+추가로 “async”로 선언 하는 방식있지만, 이 방식은 비 동기적으로 자바스크립트 코드를 실행한다.
+
+자바스크립트는 load 되자마자 동시에 병렬적으로 실행되게 된다.
+
+때문에, 백그라운드에서 처리 해야 하는 Api 호출이나 서버 작업 등에서는 매우 효율적이지만,
+
+DOM을 핸들링엔 적합하지 않다.
+
+
+
+
+
+
+
+
+
+
+
+'CSS' + 'HTML'
+
+
+
+
+
+HTML 파싱 → DOM 트리 생성
+브라우저는 html을 파싱하여 DOM 트리를 생성한다. 
+이때 Css나 js등 외부 리소스를 만날 경우 DOM을 일시정지(블로킹) 한다.
+
+
+
+CSS 파싱 → CSSOM 트리 생성
+CSSOM 트리 생성, DOM 생성 중 Link, 나 Style 구문을 만나게되면 
+별도의 파싱을 진행한다.
+
+
+
+랜더트리 생성
+DOM과 CSSOM을 결합해 실제 화면에 표시될 요소만 포함하여 랜더트리 생성
+display :none 등 제외 시킴,
+
+
+
+레이아웃
+랜더트리의 각 요소의 위치와 크기를 계산한다.
+
+
+
+페인팅
+레이아웃 정보를 토대로 각 요소를 화면에 그리는 역할
+
+
+
+합성
+페인트 결과들을 GPU등을 통해서 화면에 표시함
+
+
+
+
+
+
+
+
+
+마무리
+
+브라우저 랜더링은 DOM과 Css에 따른 트리를 생성한다.
+
+이를 토대로 생성된 랜더트리는 DOM → CSSOM → 페인팅 순서로 진행되어 브라우저에 보여지게 되며
+
+JS가 선언된 파일이라면 중간에 JS파일이나 구문을 접하게 된다면 트리 생성을 중단하고 JS를 우선 실행이나, 병렬적으로 처리하게 된다.
+
+
+
+이에 따른 DOM 트리 선택에 따른 에러는 defer , async에 따라 적절한 핸들링을 통해 방지 할 수 있으며,
+
+파일에 대한 개발자에게 파일이 어떠한 코드들에 대한 집합인지도 알릴 수 있는 피드백 요소가 될 수도 있다.
+
+ddd`,
     },
   });
 
