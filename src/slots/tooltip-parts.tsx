@@ -29,6 +29,7 @@ export default function SimpleToolTip() {
       setMobileView("main");
     }
   }, [isMobile, mobileView]);
+
   useEffect(() => {
     const updateRect = () => {
       setRect(document.body.getBoundingClientRect());
@@ -38,7 +39,6 @@ export default function SimpleToolTip() {
 
     const resizeObserver = new ResizeObserver(updateRect);
     resizeObserver.observe(document.body);
-
     window.addEventListener("scroll", updateRect);
 
     return () => {
@@ -49,13 +49,13 @@ export default function SimpleToolTip() {
 
   return (
     <Toolbar
-      style={
-        isMobile
-          ? {
-              bottom: `calc(100% - ${windowSize.height - rect.y}px)`,
-            }
-          : {}
-      }
+    // style={
+    //   isMobile
+    //     ? {
+    //         bottom: `calc(100% - ${windowSize.height - rect.y}px)`,
+    //       }
+    //     : {}
+    // }
     >
       {mobileView === "main" ? (
         <MainToolbarContent

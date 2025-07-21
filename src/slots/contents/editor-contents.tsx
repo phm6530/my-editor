@@ -16,13 +16,12 @@ export default function SimpleEditorContents({
   className?: string;
 }) {
   const editor = useTiptapEditor(providedEditor);
-  const initialized = useRef(false);
 
-  //처음만벨류세팅함
+  // 외부(Form)의 `value`가 바뀔 때 실행
   useEffect(() => {
-    if (!editor || !value || initialized.current) return;
-    editor.commands.setContent(value);
-    initialized.current = true;
+    if (value !== editor.getHTML()) {
+      editor.commands.setContent(value || "", false);
+    }
   }, [editor, value]);
 
   // update CB

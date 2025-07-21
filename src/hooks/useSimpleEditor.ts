@@ -41,6 +41,8 @@ lowlight.register("html", html);
 lowlight.register("css", css);
 lowlight.register("js", js);
 lowlight.register("ts", ts);
+lowlight.register("jsx", js);
+lowlight.register("tsx", ts);
 
 type TocListProps = {
   level: number;

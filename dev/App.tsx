@@ -74,7 +74,7 @@ export default function App() {
     uploadCallback: async (file: File) => {
       return await imgUploader(file, "blog");
     },
-    editable: false,
+    editable: true,
   });
 
   return (
@@ -83,38 +83,42 @@ export default function App() {
         Get My Json
       </button>
 
-      {/* Provider */}
-      <EditorProvider editor={editor}>
-        <SimpleToolTip />
-        <input
-          type="test"
-          placeholder="제목을 입력하세요"
-          {...form.register("title", { required: "필수.." })}
-        />
+      <div style={{ position: "relative" }}>
+        {/* Provider */}
+        <EditorProvider editor={editor}>
+          <div>
+            asdf
+            <SimpleToolTip />
+          </div>
+          <input
+            type="test"
+            placeholder="제목을 입력하세요"
+            {...form.register("title", { required: "필수.." })}
+          />
 
-        <Controller
-          control={form.control}
-          name="value"
-          rules={{
-            required: "내용을 입력해주세요.",
-            minLength: {
-              value: 1,
-              message: "내용은 최소 10자 이상이어야 합니다.",
-            },
+          <Controller
+            control={form.control}
+            name="value"
+            rules={{
+              required: "내용을 입력해주세요.",
+              minLength: {
+                value: 1,
+                message: "내용은 최소 10자 이상이어야 합니다.",
+              },
 
-            validate: (value) => {
-              if (value === "" || value === "<p></p>") {
-                return "본문을 작성해주세요.";
-              }
-              return true;
-            },
-          }}
-          render={({ field }) => {
-            return <SimpleEditorContents {...field} />;
-          }}
-        />
-      </EditorProvider>
-
+              validate: (value) => {
+                if (value === "" || value === "<p></p>") {
+                  return "본문을 작성해주세요.";
+                }
+                return true;
+              },
+            }}
+            render={({ field }) => {
+              return <SimpleEditorContents {...field} />;
+            }}
+          />
+        </EditorProvider>
+      </div>
       <div className="grid grid-cols-2">
         <div className="border ">
           <div className="sticky top-0">{json && TocRender(json)}</div>
