@@ -19,6 +19,8 @@ export default function SimpleEditorContents({
 
   // 외부(Form)의 `value`가 바뀔 때 실행
   useEffect(() => {
+    if (!editor) return;
+
     if (value !== editor.getHTML()) {
       editor.commands.setContent(value || "", false);
     }
