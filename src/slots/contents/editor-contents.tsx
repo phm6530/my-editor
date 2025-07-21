@@ -1,7 +1,7 @@
 import { useTiptapEditor } from "@/hooks/use-tiptap-editor";
 
 import { Editor, EditorContent } from "@tiptap/react";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useRef } from "react";
 
 export default function SimpleEditorContents({
   editor: providedEditor,
@@ -16,14 +16,13 @@ export default function SimpleEditorContents({
   className?: string;
 }) {
   const editor = useTiptapEditor(providedEditor);
+  const initialized = useRef(false);
 
-  // 외부(Form)의 `value`가 바뀔 때 실행
+  //처음만벨류세팅함
   useEffect(() => {
-    if (!editor) return;
-
-    if (value !== editor.getHTML()) {
-      editor.commands.setContent(value || "", false);
-    }
+    if (!editor || !value || initialized.current) return;
+    editor.commands.setContent(value);
+    initialized.current = true;
   }, [editor, value]);
 
   // update CB
