@@ -1,4 +1,4 @@
-# Tip Tap Editor Custom
+# my-simple-editor
 
 ---
 
