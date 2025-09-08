@@ -1,6 +1,5 @@
 import { Toolbar } from "@/components/tiptap-ui-primitive/toolbar";
 import { useMobile } from "@/hooks/use-mobile";
-import { useWindowSize } from "@/hooks/use-window-size";
 import { useEffect, useState } from "react";
 import {
   MainToolbarContent,
@@ -13,7 +12,6 @@ export default function SimpleToolTip() {
   );
 
   const isMobile = useMobile();
-  const windowSize = useWindowSize();
 
   const [rect, setRect] = useState<
     Pick<DOMRect, "x" | "y" | "width" | "height">
@@ -48,15 +46,7 @@ export default function SimpleToolTip() {
   }, []);
 
   return (
-    <Toolbar
-    // style={
-    //   isMobile
-    //     ? {
-    //         bottom: `calc(100% - ${windowSize.height - rect.y}px)`,
-    //       }
-    //     : {}
-    // }
-    >
+    <Toolbar>
       {mobileView === "main" ? (
         <MainToolbarContent
           onHighlighterClick={() => setMobileView("highlighter")}
