@@ -30,13 +30,8 @@
   "peerDependencies": {
     "@radix-ui/react-select": "^2.1.7",
     "@radix-ui/react-tooltip": "^1.2.0",
-    "class-variance-authority": "^0.7.1",
-    "classnames": "^2.5.1",
-    "lucide-react": "^0.487.0",
-    "react": ">=18.0.0",
-    "react-dom": ">=18.0.0",
     "@tiptap/extension-blockquote": "^2.11.7",
-    "@tiptap/extension-code-block-lowlight": "^2.11.7",
+    "@tiptap/extension-code-block-lowlight": "^2.26.1",
     "@tiptap/extension-font-family": "^2.11.7",
     "@tiptap/extension-heading": "^2.11.7",
     "@tiptap/extension-highlight": "^2.11.7",
@@ -63,6 +58,11 @@
     "@tiptap/pm": "^2.11.7",
     "@tiptap/react": "^2.11.7",
     "@tiptap/starter-kit": "^2.11.7",
+    "class-variance-authority": "^0.7.1",
+    "classnames": "^2.5.1",
+    "lucide-react": "^0.487.0",
+    "react": ">=18.0.0",
+    "react-dom": ">=18.0.0",
     "tiptap-extension-resize-image": "^1.2.1"
   },
   "files": [
@@ -74,6 +74,7 @@
     "@floating-ui/react": "^0.27.8",
     "@supabase/supabase-js": "^2.49.4",
     "lodash": "^4.17.21",
+    "lowlight": "^3.3.0",
     "react-hook-form": "^7.55.0",
     "uuid": "^11.1.0"
   }

@@ -1,0 +1,25 @@
+.tiptap-image-upload-error-text {
+  color: red;
+  font-size: 0.8em;
+  margin-top: 5px;
+}
+
+.tiptap-image-upload-preview-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.tiptap-image-upload-file-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.tiptap-image-upload-details {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}

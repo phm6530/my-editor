@@ -257,7 +257,7 @@ interface ImageUploadPreviewProps {
 const ImageUploadPreview: React.FC<ImageUploadPreviewProps> = ({
   file,
   progress,
-  status,
+  status, // error
   onRemove,
 }) => {
   const formatFileSize = (bytes: number) => {
@@ -287,6 +287,11 @@ const ImageUploadPreview: React.FC<ImageUploadPreviewProps> = ({
             <span className="tiptap-image-upload-subtext">
               {formatFileSize(file.size)}
             </span>
+            {status === "error" && (
+              <span className="tiptap-image-upload-error-text">
+                업로드 실패
+              </span>
+            )}
           </div>
         </div>
         <div className="tiptap-image-upload-actions">
