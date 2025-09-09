@@ -11,37 +11,25 @@ import { Typography } from "@tiptap/extension-typography";
 import { Subscript } from "@tiptap/extension-subscript";
 import { Superscript } from "@tiptap/extension-superscript";
 import { Underline } from "@tiptap/extension-underline";
-import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
 
 // --- Custom Extensions ---
 import { Link } from "@/components/tiptap-extension/link-extension";
 import { Selection } from "@/components/tiptap-extension/selection-extension";
 import { TrailingNode } from "@/components/tiptap-extension/trailing-node-extension";
+import { PasteHandler } from "@/components/tiptap-extension/paste-handler-extension";
 
 // --- Tiptap Node ---
 import Youtube from "@tiptap/extension-youtube";
+import { CodeBlockCustom } from "@/components/tiptap-node/code-block-node";
+import { MetaBlock } from "@/components/tiptap-node/meta-block-node";
 
 // --- Lib ---
 import ImageResize from "tiptap-extension-resize-image";
 
 //---codeBlock
-import { all, createLowlight } from "lowlight";
-import css from "highlight.js/lib/languages/css";
-import js from "highlight.js/lib/languages/javascript";
-import ts from "highlight.js/lib/languages/typescript";
-import html from "highlight.js/lib/languages/xml";
 import Placeholder from "@tiptap/extension-placeholder";
 import Heading from "@tiptap/extension-heading";
 import { v4 as uuidv4 } from "uuid";
-
-const lowlight = createLowlight(all);
-
-lowlight.register("html", html);
-lowlight.register("css", css);
-lowlight.register("js", js);
-lowlight.register("ts", ts);
-lowlight.register("jsx", js);
-lowlight.register("tsx", ts);
 
 type TocListProps = {
   level: number;
@@ -112,10 +100,14 @@ export function useSimpleEditor({
   placeholder,
   uploadCallback,
   editable,
+  onFetchMetadata,
 }: {
   placeholder?: string;
   uploadCallback?: (file: File) => Promise<string>;
   editable?: boolean;
+  onFetchMetadata?: (
+    url: string
+  ) => Promise<{ title?: string; description?: string; image?: string }>;
 } = {}) {
   const CustomHeading = Heading.extend({
     renderHTML({ node, HTMLAttributes }) {
@@ -176,9 +168,9 @@ export function useSimpleEditor({
         : []),
       Placeholder.configure({ placeholder }),
       TrailingNode,
-      CodeBlockLowlight.configure({
-        lowlight,
-      }),
+      CodeBlockCustom,
+      MetaBlock.configure({ onFetchMetadata }),
+      PasteHandler,
       Link.configure({ openOnClick: false }),
     ],
     editable,

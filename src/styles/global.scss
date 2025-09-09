@@ -3,7 +3,7 @@
 @use "./button/button-group.scss";
 @use "./button/button.scss";
 @use "./highlight/highlight-popover.scss";
-@use "./link-popover/link-popover.scss";
+
 @use "./tooltip/tooltip.scss";
 @use "./separator/separator.scss";
 @use "./popover/popover.scss";
@@ -11,6 +11,7 @@
 @use "./toolbar/toolbar.scss";
 @use "./task/task.scss";
 @use "./code/code.scss";
+@use "meta-block";
 
 /* tiptap Custom Editor - */
 @use "./editor.scss";

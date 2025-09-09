@@ -73,9 +73,11 @@
   "dependencies": {
     "@floating-ui/react": "^0.27.8",
     "@supabase/supabase-js": "^2.49.4",
+    "@types/react-syntax-highlighter": "^15.5.13",
     "lodash": "^4.17.21",
     "lowlight": "^3.3.0",
     "react-hook-form": "^7.55.0",
+    "react-syntax-highlighter": "^15.6.6",
     "uuid": "^11.1.0"
   }
 }

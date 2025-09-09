@@ -5,8 +5,11 @@
 }
 .tiptap {
   p {
-    line-height: 1.7;
+    line-height: 2;
     letter-spacing: -0.01rem;
+    margin-block-start: 1.2rem;
+    margin-block-end: 1.2rem;
+    font-size: calc(1rem * var(--font-scale));
   }
   :first-child {
     margin-top: 0;
