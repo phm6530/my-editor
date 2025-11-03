@@ -1,3 +1,4 @@
+// Trigger reload
 "use client";
 
 import "../src/styles/global.scss";
@@ -233,10 +234,8 @@ ddd`,
     },
   });
 
-  const compRef = useRef<{ getHeadings: () => any }>(null);
-
   const handleClick = () => {
-    const result = compRef.current?.getHeadings();
+    const result = getHeadings();
     setJson(result);
   };
 
@@ -327,6 +326,7 @@ ddd`,
         </EditorProvider>
       </div>
       <div className="grid grid-cols-2">
+        ㅁㅁㅁ
         <div className="border ">
           <div className="sticky top-0">{json && TocRender(json)}</div>
         </div>

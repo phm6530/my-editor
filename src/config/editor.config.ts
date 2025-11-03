@@ -8,6 +8,7 @@ import StarterKit from "@tiptap/starter-kit";
 import Youtube from "@tiptap/extension-youtube";
 import Underline from "@tiptap/extension-underline";
 import Mention from "@tiptap/extension-mention";
+import { Plugin, PluginKey } from "@tiptap/pm/state";
 
 import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
 import { UseMyEditorProps } from "../hooks/useMyEditor";
@@ -38,13 +39,53 @@ export const extensionsConfig = ({
   "onChange" | "content" | "editorMode"
 >): AnyExtension[] => {
   const CustomHeading = Heading.extend({
+    addAttributes() {
+      return {
+        ...this.parent?.(),
+        id: {
+          default: null,
+          parseHTML: (element) => element.getAttribute("id"),
+        },
+      };
+    },
+
+    addProseMirrorPlugins() {
+      return [
+        new Plugin({
+          key: new PluginKey("heading_id_plugin"),
+          appendTransaction: (transactions, oldState, newState) => {
+            if (!transactions.some((tr) => tr.docChanged)) {
+              return null;
+            }
+
+            const tr = newState.tr;
+            let modified = false;
+            newState.doc.descendants((node, pos) => {
+              if (node.type.name === this.name && !node.attrs.id) {
+                tr.setNodeMarkup(pos, undefined, {
+                  ...node.attrs,
+                  id: `heading-${uuidv4()}`,
+                });
+                modified = true;
+              }
+            });
+
+            if (modified) {
+              return tr;
+            }
+
+            return null;
+          },
+        }),
+      ];
+    },
+
     renderHTML({ node, HTMLAttributes }) {
       const level = node.attrs.level;
       return [
         `h${level}`,
         {
           ...HTMLAttributes,
-          id: `heading-${uuidv4()}`,
           class: `heading heading-lv${level}`,
           lev: level,
         },
