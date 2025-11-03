@@ -1,6 +1,6 @@
 import { Editor } from "@tiptap/react";
 
-export const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+export const MAX_FILE_SIZE = 10 * 1024 * 1024; // 5MB
 
 /**
  * Checks if a mark exists in the editor schema
